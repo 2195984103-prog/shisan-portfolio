@@ -7,25 +7,24 @@
   to = "/index.html"
   status = 200
 
-# File-extension rules first (higher priority, longer cache)
+# File-extension rules — most specific first (1yr immutable for images & video)
 [[headers]]
-  for = "/*.webp"
+  for = "/assets/**/*.webp"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "image/webp"
 
 [[headers]]
-  for = "/*.mp4"
+  for = "/assets/**/*.mp4"
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-# Font rule next
+# Font rule
 [[headers]]
   for = "/fonts/*"
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
-# General asset rule last — catch-all for /assets/optimized/*, /assets/mobile/*, /assets/thumbs/*
+# General asset catch-all (7d)
 [[headers]]
   for = "/assets/*"
   [headers.values]
