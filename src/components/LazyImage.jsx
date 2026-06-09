@@ -23,7 +23,6 @@ export default function LazyImage({
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   const [showFull, setShowFull] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const isPriority = fetchPriority === "high";
 
   // Viewport detection
@@ -97,8 +96,7 @@ export default function LazyImage({
       loading={isPriority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={fetchPriority}
-      onLoad={() => setLoaded(true)}
-      className={`${className} ${loaded ? "img-loaded" : "img-loading"}`}
+      className={className}
       {...rest}
     />
   );
