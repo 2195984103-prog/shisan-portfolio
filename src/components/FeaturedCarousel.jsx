@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { projectImageSrcSet } from "../utils/assets.js";
 
 const AUTOPLAY_INTERVAL = 5000;
 
@@ -118,9 +119,12 @@ export default function FeaturedCarousel({ projects }) {
             >
               <img
                 src={slideImage}
+                srcSet={projectImageSrcSet(slideImage)}
+                sizes="(max-width: 640px) 86vw, 78vw"
                 alt={project.title}
                 className="featured-slide-image"
                 loading={index === activeIndex ? "eager" : "lazy"}
+                decoding="async"
                 data-fallback-src={project.coverImage !== slideImage ? project.coverImage : undefined}
                 onError={handleImageError}
               />

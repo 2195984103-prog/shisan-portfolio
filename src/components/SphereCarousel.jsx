@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { projectImageSrcSet } from "../utils/assets.js";
 
 const orbitSlots = [
   "sphere-node-1",
@@ -32,9 +33,11 @@ export default function SphereCarousel({ projects }) {
           >
             <img
               src={project.coverImage}
+              srcSet={projectImageSrcSet(project.coverImage)}
+              sizes="(max-width: 640px) 96px, 170px"
               alt=""
               className="sphere-node-image"
-              loading={index <= 3 ? "eager" : "lazy"}
+              loading={index <= 1 ? "eager" : "lazy"}
               decoding="async"
               onError={handleImageError}
             />

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { projectImageSrcSet } from "../utils/assets.js";
 
 export default function ProjectCard({ project, large = false }) {
   return (
@@ -10,6 +11,8 @@ export default function ProjectCard({ project, large = false }) {
       <div className="media-frame reveal-media" data-reveal>
         <img
           src={project.coverImage}
+          srcSet={projectImageSrcSet(project.coverImage)}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           alt={project.title}
           className={[
             "image-hover w-full object-cover",

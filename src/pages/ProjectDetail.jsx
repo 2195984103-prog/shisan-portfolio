@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import DisplayTitle from "../components/DisplayTitle.jsx";
 import { projects } from "../data/projects.js";
+import { projectImageSrcSet } from "../utils/assets.js";
 
 const portraitGalleryProjectIds = new Set([
   "la-mer-aigc-visual",
@@ -58,6 +59,8 @@ export default function ProjectDetail() {
       <section className="project-hero">
         <img
           src={project.heroImage || project.coverImage}
+          srcSet={projectImageSrcSet(project.heroImage || project.coverImage)}
+          sizes="100vw"
           alt={project.title}
           className="project-hero-image"
           decoding="async"
@@ -148,6 +151,14 @@ export default function ProjectDetail() {
                     ) : (
                       <img
                         src={image}
+                        srcSet={projectImageSrcSet(image)}
+                        sizes={
+                          usesPosterGallery
+                            ? "(max-width: 640px) 100vw, 25vw"
+                            : usesPortraitGallery
+                              ? "(max-width: 640px) 100vw, 50vw"
+                              : "100vw"
+                        }
                         alt={`${project.title} 项目展示图 ${index + 1}`}
                         className="h-full w-full object-cover"
                         loading="lazy"
