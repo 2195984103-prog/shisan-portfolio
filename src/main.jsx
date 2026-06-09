@@ -4,6 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 
+// Register service worker for instant repeat loads
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js");
+  });
+}
+
+// Global image fade-in: add .img-loaded class when image finishes loading
+document.addEventListener("load", (e) => {
+  if (e.target.tagName === "IMG") e.target.classList.add("img-loaded");
+}, true);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

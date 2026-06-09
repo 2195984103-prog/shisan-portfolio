@@ -1,14 +1,13 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import preact from "@preact/preset-vite";
 
 export default defineConfig({
   plugins: [
-    react(),
+    preact(),
     {
       name: "preload-home-chunks",
       transformIndexHtml(html, ctx) {
         if (!ctx || !ctx.bundle) return html;
-        // Find the Home chunk and projects data chunk, add modulepreload
         const preloads = [];
         for (const [name, info] of Object.entries(ctx.bundle)) {
           if (name.includes("Home-") || name.includes("projects-")) {
