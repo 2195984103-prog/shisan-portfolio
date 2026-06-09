@@ -3,7 +3,7 @@ import Button from "../components/Button.jsx";
 import DisplayTitle from "../components/DisplayTitle.jsx";
 import LazyImage from "../components/LazyImage.jsx";
 import { projects } from "../data/projects.js";
-import { projectImageSrcSet } from "../utils/assets.js";
+import { projectImageSrcSet, projectGallerySrc, mobileProjectAsset } from "../utils/assets.js";
 
 const portraitGalleryProjectIds = new Set([
   "la-mer-aigc-visual",
@@ -146,7 +146,7 @@ export default function ProjectDetail() {
                         controls
                         playsInline
                         preload="none"
-                        poster={project.coverImage}
+                        poster={mobileProjectAsset(project.coverImage) || project.coverImage}
                         aria-label={`${project.title} 项目展示视频 ${index + 1}`}
                       />
                     ) : (
@@ -160,6 +160,7 @@ export default function ProjectDetail() {
                               ? "(max-width: 640px) 100vw, 50vw"
                               : "100vw"
                         }
+                        placeholder={projectGallerySrc(image)}
                         alt={`${project.title} 项目展示图 ${index + 1}`}
                         className="h-full w-full object-cover"
                       />

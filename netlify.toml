@@ -7,18 +7,26 @@
   to = "/index.html"
   status = 200
 
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=604800"
-
+# File-extension rules first (higher priority, longer cache)
 [[headers]]
   for = "/*.webp"
   [headers.values]
-    Cache-Control = "public, max-age=31536000"
+    Cache-Control = "public, max-age=31536000, immutable"
     Content-Type = "image/webp"
 
 [[headers]]
+  for = "/*.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Font rule next
+[[headers]]
   for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# General asset rule last — catch-all for /assets/optimized/*, /assets/mobile/*, /assets/thumbs/*
+[[headers]]
+  for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=604800"
