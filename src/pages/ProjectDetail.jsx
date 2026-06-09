@@ -99,7 +99,7 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      {project.galleryImages?.length > 0 && (
+      {project.images?.length > 0 && (
         <section className="project-gallery-section bg-[#111111]">
           <div className="page-shell section-space">
             <div className="mb-12 grid gap-8 sm:mb-16 lg:grid-cols-[0.68fr_1.32fr]">
@@ -125,7 +125,7 @@ export default function ProjectDetail() {
                 usesPosterGallery ? "project-gallery-poster" : "",
               ].join(" ")}
             >
-              {project.galleryImages.map((image, index) => {
+              {project.images.map((image, index) => {
                 const isVideo = isVideoAsset(image);
 
                 return (
@@ -152,6 +152,14 @@ export default function ProjectDetail() {
                     ) : (
                       <LazyImage
                         src={image}
+                        srcSet={projectImageSrcSet(image)}
+                        sizes={
+                          usesPosterGallery
+                            ? "(max-width: 640px) 100vw, 25vw"
+                            : usesPortraitGallery
+                              ? "(max-width: 640px) 100vw, 50vw"
+                              : "100vw"
+                        }
                         alt={`${project.title} 项目展示图 ${index + 1}`}
                         className="h-full w-full object-cover"
                       />

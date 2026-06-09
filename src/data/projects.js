@@ -7,19 +7,11 @@ const useOptimizedProjectAsset = (path) => {
     .replace(/\.(jpe?g)$/i, ".webp");
 };
 
-const useGalleryAsset = (path) => {
-  if (!path || /\.(mp4|webm|mov)$/i.test(path)) return path;
-  return path
-    .replace("/assets/projects/", "/assets/thumbs/projects/")
-    .replace(/\.(jpe?g)$/i, ".webp");
-};
-
 const withOptimizedAssets = (project) => ({
   ...project,
   coverImage: useOptimizedProjectAsset(project.coverImage),
   heroImage: useOptimizedProjectAsset(project.heroImage),
   images: project.images?.map(useOptimizedProjectAsset) ?? [],
-  galleryImages: project.images?.map(useGalleryAsset) ?? [],
 });
 
 // 所有作品项目都放在这个数组里。

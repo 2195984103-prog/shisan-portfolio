@@ -2,10 +2,20 @@ import { useRef, useState, useEffect } from "react";
 
 /**
  * Image that only begins loading when it enters the viewport (within rootMargin).
- * This prevents off-screen gallery images from competing for bandwidth with
+ * This prevents off-screen gallery images from competing with bandwidth for
  * the hero image and above-the-fold content.
+ *
+ * Uses srcSet + sizes for responsive high-res: desktop → 1800px, mobile → 960px.
+ * Image quality is preserved — the browser picks the right resolution for the viewport.
  */
-export default function LazyImage({ src, alt = "", className = "", ...rest }) {
+export default function LazyImage({
+  src,
+  srcSet,
+  sizes,
+  alt = "",
+  className = "",
+  ...rest
+}) {
   const ref = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -21,7 +31,7 @@ export default function LazyImage({ src, alt = "", className = "", ...rest }) {
           obs.disconnect();
         }
       },
-      { rootMargin: "800px" } // Start loading when within 800px of viewport
+      { rootMargin: "800px" }
     );
 
     obs.observe(el);
@@ -32,6 +42,8 @@ export default function LazyImage({ src, alt = "", className = "", ...rest }) {
     <img
       ref={ref}
       src={shouldLoad ? src : undefined}
+      srcSet={shouldLoad ? srcSet : undefined}
+      sizes={shouldLoad ? sizes : undefined}
       alt={alt}
       loading="lazy"
       decoding="async"
