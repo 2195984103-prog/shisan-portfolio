@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { projectImageSrcSet } from "../utils/assets.js";
+import { projectImageSrcSet, projectGallerySrc } from "../utils/assets.js";
+import LazyImage from "./LazyImage.jsx";
 
 export default function ProjectCard({ project, large = false }) {
   return (
@@ -9,17 +10,16 @@ export default function ProjectCard({ project, large = false }) {
       aria-label={`查看项目 ${project.title}`}
     >
       <div className="media-frame reveal-media" data-reveal>
-        <img
+        <LazyImage
           src={project.coverImage}
           srcSet={projectImageSrcSet(project.coverImage)}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          placeholder={projectGallerySrc(project.coverImage)}
           alt={project.title}
           className={[
             "image-hover w-full object-cover",
             "aspect-[16/9]",
           ].join(" ")}
-          loading="lazy"
-          decoding="async"
         />
       </div>
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 sm:gap-6">
