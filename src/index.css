@@ -1333,7 +1333,6 @@ img {
 }
 
 .reveal-media {
-  opacity: 0;
   transform: translateY(18px);
   transition:
     opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
