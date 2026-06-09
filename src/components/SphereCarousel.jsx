@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { projectImageSrcSet } from "../utils/assets.js";
+import usePrefetchImage from "../hooks/usePrefetchImage.js";
 
 const orbitSlots = [
   "sphere-node-1",
@@ -12,8 +13,8 @@ const orbitSlots = [
   "sphere-node-8",
 ];
 
-export default function SphereCarousel({ projects }) {
-  const heroProjects = projects.slice(0, orbitSlots.length);
+function SphereNode({ project, slotClass, index }) {
+  const prefetchHero = usePrefetchImage(project.heroImage);
 
   const handleImageError = (event) => {
     if (event.currentTarget.dataset.fallbackUsed) return;
@@ -22,26 +23,41 @@ export default function SphereCarousel({ projects }) {
   };
 
   return (
+    <Link
+      key={project.id}
+      to={`/project/${project.id}`}
+      className={`sphere-node ${slotClass}`}
+      aria-label={`查看项目 ${project.title}`}
+      onMouseEnter={prefetchHero}
+      onTouchStart={prefetchHero}
+    >
+      <img
+        src={project.coverImage}
+        srcSet={projectImageSrcSet(project.coverImage)}
+        sizes="(max-width: 640px) 96px, 170px"
+        alt=""
+        className="sphere-node-image"
+        loading={index <= 1 ? "eager" : "lazy"}
+        decoding="async"
+        onError={handleImageError}
+      />
+    </Link>
+  );
+}
+
+export default function SphereCarousel({ projects }) {
+  const heroProjects = projects.slice(0, orbitSlots.length);
+
+  return (
     <section className="sphere-stage" aria-label="作品集首页">
       <div className="sphere-cluster">
         {heroProjects.map((project, index) => (
-          <Link
+          <SphereNode
             key={project.id}
-            to={`/project/${project.id}`}
-            className={`sphere-node ${orbitSlots[index]}`}
-            aria-label={`查看项目 ${project.title}`}
-          >
-            <img
-              src={project.coverImage}
-              srcSet={projectImageSrcSet(project.coverImage)}
-              sizes="(max-width: 640px) 96px, 170px"
-              alt=""
-              className="sphere-node-image"
-              loading={index <= 1 ? "eager" : "lazy"}
-              decoding="async"
-              onError={handleImageError}
-            />
-          </Link>
+            project={project}
+            slotClass={orbitSlots[index]}
+            index={index}
+          />
         ))}
       </div>
 

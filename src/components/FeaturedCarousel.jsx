@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { projectImageSrcSet } from "../utils/assets.js";
+import usePrefetchImage from "../hooks/usePrefetchImage.js";
 
 const AUTOPLAY_INTERVAL = 5000;
 
@@ -23,6 +24,46 @@ const ArrowRight = () => (
     <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+function FeaturedSlide({ project, slideState, isActive, onImageError }) {
+  const heroSrc = project.heroImage || project.coverImage;
+  const prefetchHero = usePrefetchImage(heroSrc);
+
+  return (
+    <Link
+      to={`/project/${project.id}`}
+      className={`featured-slide featured-slide-${slideState}`}
+      aria-label={`查看项目 ${project.title}`}
+      aria-hidden={slideState === "hidden"}
+      aria-roledescription="slide"
+      tabIndex={slideState === "active" ? 0 : -1}
+      onMouseEnter={prefetchHero}
+      onTouchStart={prefetchHero}
+    >
+      <img
+        src={heroSrc}
+        srcSet={projectImageSrcSet(heroSrc)}
+        sizes="(max-width: 640px) 86vw, 78vw"
+        alt={project.title}
+        className="featured-slide-image"
+        loading={isActive ? "eager" : "lazy"}
+        decoding="async"
+        data-fallback-src={project.coverImage !== heroSrc ? project.coverImage : undefined}
+        onError={onImageError}
+      />
+      <div className="featured-slide-shade" />
+      <div className="featured-slide-caption">
+        <p>{project.brand} / {project.type}</p>
+        <h3>
+          {(project.titleLines ?? [project.title]).map((line, i) => (
+            <span key={i} className="title-line">{line}</span>
+          ))}
+        </h3>
+        <span>{project.year}</span>
+      </div>
+    </Link>
+  );
+}
 
 export default function FeaturedCarousel({ projects }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -103,44 +144,15 @@ export default function FeaturedCarousel({ projects }) {
       </button>
 
       <div className="featured-carousel-stage">
-        {projects.map((project, index) => {
-          const slideState = getSlideState(index, activeIndex, total);
-          const slideImage = project.heroImage || project.coverImage;
-
-          return (
-            <Link
-              key={project.id}
-              to={`/project/${project.id}`}
-              className={`featured-slide featured-slide-${slideState}`}
-              aria-label={`查看项目 ${project.title}`}
-              aria-hidden={slideState === "hidden"}
-              aria-roledescription="slide"
-              tabIndex={slideState === "active" ? 0 : -1}
-            >
-              <img
-                src={slideImage}
-                srcSet={projectImageSrcSet(slideImage)}
-                sizes="(max-width: 640px) 86vw, 78vw"
-                alt={project.title}
-                className="featured-slide-image"
-                loading={index === activeIndex ? "eager" : "lazy"}
-                decoding="async"
-                data-fallback-src={project.coverImage !== slideImage ? project.coverImage : undefined}
-                onError={handleImageError}
-              />
-              <div className="featured-slide-shade" />
-              <div className="featured-slide-caption">
-                <p>{project.brand} / {project.type}</p>
-                <h3>
-                  {(project.titleLines ?? [project.title]).map((line, i) => (
-                    <span key={i} className="title-line">{line}</span>
-                  ))}
-                </h3>
-                <span>{project.year}</span>
-              </div>
-            </Link>
-          );
-        })}
+        {projects.map((project, index) => (
+          <FeaturedSlide
+            key={project.id}
+            project={project}
+            slideState={getSlideState(index, activeIndex, total)}
+            isActive={index === activeIndex}
+            onImageError={handleImageError}
+          />
+        ))}
       </div>
 
       <button
