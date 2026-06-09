@@ -24,8 +24,10 @@ export default function LazyImage({
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   const [showFull, setShowFull] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [fallbackSrc, setFallbackSrc] = useState(null);
   const isPriority = fetchPriority === "high";
+  const visibleSrc = fallbackSrc || src;
+  const visibleSrcSet = fallbackSrc ? undefined : srcSet;
 
   // Viewport detection
   useEffect(() => {
@@ -74,14 +76,14 @@ export default function LazyImage({
   }
 
   // Placeholder phase
-  if ((!showFull && placeholder) || failed) {
+  if (!showFull && placeholder) {
     return (
       <img
         ref={ref}
-        src={failed ? undefined : placeholder}
+        src={placeholder}
         alt={alt}
         decoding="async"
-        className={`${className} ${failed ? "img-failed" : ""}`}
+        className={className}
         {...rest}
       />
     );
@@ -91,18 +93,32 @@ export default function LazyImage({
   return (
     <img
       ref={ref}
-      src={src}
-      srcSet={srcSet}
+      src={visibleSrc}
+      srcSet={visibleSrcSet}
       sizes={sizes}
       alt={alt}
       loading={isPriority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={fetchPriority}
       onError={(e) => {
-        if (!failed) setFailed(true);
+        const image = e.currentTarget;
+        const candidates = [
+          placeholder,
+          src?.replace("/assets/projects/", "/assets/optimized/projects/").replace(/\.(jpe?g)$/i, ".webp"),
+          "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp",
+        ].filter(Boolean);
+        const nextFallback = candidates.find((candidate) => candidate !== image.getAttribute("src"));
+
+        if (nextFallback) {
+          image.classList.remove("img-failed");
+          setFallbackSrc(nextFallback);
+        } else {
+          image.classList.add("img-failed");
+        }
+
         if (onError) onError(e);
       }}
-      className={className}
+      className={`${className} ${fallbackSrc ? "img-fallback" : ""}`}
       {...rest}
     />
   );

@@ -1,5 +1,5 @@
-// Service Worker — caches all static assets for instant repeat loads
-const CACHE = "portfolio-v3";
+// Service Worker — caches static assets for instant repeat loads
+const CACHE = "portfolio-v4";
 const PRELOAD = [
   "/",
   "/fonts/optimized/oppo-sans-portfolio.woff",
@@ -45,7 +45,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets: cache-first
+  // Static assets: cache-first. For images, only cache real image responses;
+  // missing assets can be rewritten to index.html by SPA fallbacks.
   if (
     event.request.destination === "script" ||
     event.request.destination === "style" ||
@@ -55,7 +56,11 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       caches.match(event.request).then((cached) => {
         const fetchPromise = fetch(event.request).then((response) => {
-          if (response.ok) {
+          const contentType = response.headers.get("content-type") || "";
+          const isCacheableImage =
+            event.request.destination !== "image" || contentType.startsWith("image/");
+
+          if (response.ok && isCacheableImage) {
             const clone = response.clone();
             caches.open(CACHE).then((cache) => cache.put(event.request, clone));
           }
