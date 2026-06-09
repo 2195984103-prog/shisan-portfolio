@@ -8,3 +8,12 @@ export function projectImageSrcSet(path) {
   if (!mobilePath || mobilePath === path) return undefined;
   return `${mobilePath} 960w, ${path} 1800w`;
 }
+
+/**
+ * Gallery thumbnail path: rewrites an optimized (1800px) image path
+ * to its 600px thumbnail equivalent. Videos pass through unchanged.
+ */
+export function projectGallerySrc(path) {
+  if (!path || /\.(mp4|webm|mov)$/i.test(path)) return path;
+  return path.replace("/assets/optimized/projects/", "/assets/thumbs/projects/");
+}

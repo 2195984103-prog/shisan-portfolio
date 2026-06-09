@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import DisplayTitle from "../components/DisplayTitle.jsx";
+import LazyImage from "../components/LazyImage.jsx";
 import { projects } from "../data/projects.js";
 import { projectImageSrcSet } from "../utils/assets.js";
 
@@ -98,7 +99,7 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      {project.images?.length > 0 && (
+      {project.galleryImages?.length > 0 && (
         <section className="project-gallery-section bg-[#111111]">
           <div className="page-shell section-space">
             <div className="mb-12 grid gap-8 sm:mb-16 lg:grid-cols-[0.68fr_1.32fr]">
@@ -124,7 +125,7 @@ export default function ProjectDetail() {
                 usesPosterGallery ? "project-gallery-poster" : "",
               ].join(" ")}
             >
-              {project.images.map((image, index) => {
+              {project.galleryImages.map((image, index) => {
                 const isVideo = isVideoAsset(image);
 
                 return (
@@ -149,20 +150,10 @@ export default function ProjectDetail() {
                         aria-label={`${project.title} 项目展示视频 ${index + 1}`}
                       />
                     ) : (
-                      <img
+                      <LazyImage
                         src={image}
-                        srcSet={projectImageSrcSet(image)}
-                        sizes={
-                          usesPosterGallery
-                            ? "(max-width: 640px) 100vw, 25vw"
-                            : usesPortraitGallery
-                              ? "(max-width: 640px) 100vw, 50vw"
-                              : "100vw"
-                        }
                         alt={`${project.title} 项目展示图 ${index + 1}`}
                         className="h-full w-full object-cover"
-                        loading="lazy"
-                        decoding="async"
                       />
                     )}
                     <figcaption>
