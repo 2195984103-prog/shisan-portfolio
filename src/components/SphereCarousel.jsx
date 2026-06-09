@@ -18,7 +18,7 @@ export default function SphereCarousel({ projects }) {
   const handleImageError = (event) => {
     if (event.currentTarget.dataset.fallbackUsed) return;
     event.currentTarget.dataset.fallbackUsed = "true";
-    event.currentTarget.src = "/assets/projects/dongfeng-lantu-kv/hero.jpg";
+    event.currentTarget.src = "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
   };
 
   return (

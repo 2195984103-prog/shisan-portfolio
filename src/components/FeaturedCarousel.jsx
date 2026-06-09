@@ -75,7 +75,7 @@ export default function FeaturedCarousel({ projects }) {
     if (img.dataset.fallbackUsed) return;
     img.dataset.fallbackUsed = "true";
     // Try the cover image as fallback, or a known working hero
-    const fallback = img.dataset.fallbackSrc || "/assets/projects/dongfeng-lantu-kv/hero.jpg";
+    const fallback = img.dataset.fallbackSrc || "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
     img.src = fallback;
   };
 

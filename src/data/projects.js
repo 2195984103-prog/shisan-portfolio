@@ -1,6 +1,10 @@
 const useOptimizedProjectAsset = (path) => {
+  // Rewrite source JPG paths to optimized WebP versions.
+  // Videos (mp4, webm, mov) and other formats pass through unchanged.
   if (!path || !/\.(jpe?g)$/i.test(path)) return path;
-  return path.replace("/assets/projects/", "/assets/optimized/projects/");
+  return path
+    .replace("/assets/projects/", "/assets/optimized/projects/")
+    .replace(/\.(jpe?g)$/i, ".webp");
 };
 
 const withOptimizedAssets = (project) => ({
