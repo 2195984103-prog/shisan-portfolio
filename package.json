@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "process-images": "node scripts/convert-to-webp.js && node scripts/generate-thumbnails.js",
-    "prebuild": "npm run process-images",
     "build": "vite build",
     "preview": "vite preview"
   },
