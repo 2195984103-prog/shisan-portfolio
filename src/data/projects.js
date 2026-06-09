@@ -1,6 +1,18 @@
+const useOptimizedProjectAsset = (path) => {
+  if (!path || !/\.(jpe?g)$/i.test(path)) return path;
+  return path.replace("/assets/projects/", "/assets/optimized/projects/");
+};
+
+const withOptimizedAssets = (project) => ({
+  ...project,
+  coverImage: useOptimizedProjectAsset(project.coverImage),
+  heroImage: useOptimizedProjectAsset(project.heroImage),
+  images: project.images?.map(useOptimizedProjectAsset) ?? [],
+});
+
 // 所有作品项目都放在这个数组里。
 // 后期新增项目时，复制一个对象，修改文字和图片路径即可。
-export const projects = [
+const rawProjects = [
   {
     id: "dongfeng-lantu-kv", // 项目唯一英文路径，会出现在网址里，例如 /project/dongfeng-lantu-kv
     title: "东风岚图汽车 KV 视觉设计", // 项目名称
@@ -274,6 +286,8 @@ export const projects = [
     ],
   },
 ];
+
+export const projects = rawProjects.map(withOptimizedAssets);
 
 // 分类信息，分类页和首页分类入口都会读取这里。
 export const projectCategories = [

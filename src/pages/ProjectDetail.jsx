@@ -60,6 +60,8 @@ export default function ProjectDetail() {
           src={project.heroImage || project.coverImage}
           alt={project.title}
           className="project-hero-image"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="project-hero-shade" />
         <div className="project-hero-blur" />
@@ -137,11 +139,10 @@ export default function ProjectDetail() {
                       <video
                         src={image}
                         className="h-full w-full object-cover"
-                        autoPlay
-                        loop
-                        muted
+                        controls
                         playsInline
-                        preload="metadata"
+                        preload="none"
+                        poster={project.coverImage}
                         aria-label={`${project.title} 项目展示视频 ${index + 1}`}
                       />
                     ) : (
@@ -149,6 +150,8 @@ export default function ProjectDetail() {
                         src={image}
                         alt={`${project.title} 项目展示图 ${index + 1}`}
                         className="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                     )}
                     <figcaption>

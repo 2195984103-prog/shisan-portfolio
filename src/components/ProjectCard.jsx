@@ -16,6 +16,7 @@ export default function ProjectCard({ project, large = false }) {
             "aspect-[16/9]",
           ].join(" ")}
           loading="lazy"
+          decoding="async"
         />
       </div>
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 sm:gap-6">

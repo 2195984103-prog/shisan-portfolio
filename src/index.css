@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "OPPO Sans 4.0";
-  src: url("/fonts/OPPO Sans 4.0.ttf") format("truetype");
+  src: url("/fonts/optimized/oppo-sans-portfolio.woff") format("woff");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -1375,6 +1375,17 @@ img {
   .type-page-title {
     font-size: clamp(2.4rem, 12vw, 3.6rem);
     line-height: 1.04;
+  }
+
+  .project-hero-title {
+    font-size: clamp(2.55rem, 12.5vw, 3.35rem);
+    line-height: 1.04;
+  }
+
+  .project-hero-title .title-line {
+    max-width: min(9.5ch, 92vw);
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .type-section-title {
