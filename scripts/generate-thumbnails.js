@@ -32,7 +32,7 @@ async function main() {
     mkdirSync(outDir, { recursive: true });
 
     const files = readdirSync(srcDir).filter(
-      (f) => /\.webp$/i.test(f) && !f.startsWith("cover") && !f.startsWith("hero")
+      (f) => /\.webp$/i.test(f)
     );
 
     for (const file of files) {
