@@ -11,11 +11,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Global image fade-in: add .img-loaded class when image finishes loading
-document.addEventListener("load", (e) => {
-  if (e.target.tagName === "IMG") e.target.classList.add("img-loaded");
-}, true);
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

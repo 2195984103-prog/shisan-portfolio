@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import ProjectCard from "../components/ProjectCard.jsx";
 import SectionTitle from "../components/SectionTitle.jsx";
-import { featuredProjects, projects } from "../data/projects.js";
+import { projects } from "../data/projects.js";
 
 const categoryLabels = {
   automotive: "汽车广告",
