@@ -18,11 +18,13 @@ export default function LazyImage({
   alt = "",
   fetchPriority,
   className = "",
+  onError,
   ...rest
 }) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   const [showFull, setShowFull] = useState(false);
+  const [failed, setFailed] = useState(false);
   const isPriority = fetchPriority === "high";
 
   // Viewport detection
@@ -60,7 +62,7 @@ export default function LazyImage({
 
       const applyFull = () => setShowFull(true);
       preloader.onload = applyFull;
-      preloader.onerror = applyFull;
+      preloader.onerror = () => setShowFull(true); // try src directly
     } else {
       // Priority or no placeholder: go straight to full
       setShowFull(true);
@@ -72,14 +74,14 @@ export default function LazyImage({
   }
 
   // Placeholder phase
-  if (!showFull && placeholder) {
+  if ((!showFull && placeholder) || failed) {
     return (
       <img
         ref={ref}
-        src={placeholder}
+        src={failed ? undefined : placeholder}
         alt={alt}
         decoding="async"
-        className={className}
+        className={`${className} ${failed ? "img-failed" : ""}`}
         {...rest}
       />
     );
@@ -96,6 +98,10 @@ export default function LazyImage({
       loading={isPriority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={fetchPriority}
+      onError={(e) => {
+        if (!failed) setFailed(true);
+        if (onError) onError(e);
+      }}
       className={className}
       {...rest}
     />

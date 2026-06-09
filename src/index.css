@@ -57,6 +57,10 @@ img {
   display: block;
   max-width: 100%;
 }
+img.img-failed {
+  background: rgba(255, 255, 255, 0.06);
+  min-height: 120px;
+}
 
 ::selection {
   background: #f26a1b;

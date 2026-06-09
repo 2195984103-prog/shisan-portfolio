@@ -20,7 +20,15 @@ export default function BrandMarquee() {
             <div className="brand-marquee-group" aria-hidden={groupIndex > 0} key={groupIndex}>
               {group.map((brand) => (
                 <div className="brand-logo-item" key={`${groupIndex}-${brand.logo}`}>
-                  <img src={brand.logo} alt={brand.name} loading="lazy" decoding="async" />
+                  <img
+                    src={brand.logo}
+                    alt={brand.name}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.classList.add("img-failed");
+                    }}
+                  />
                 </div>
               ))}
             </div>

@@ -17,9 +17,12 @@ function SphereNode({ project, slotClass, index }) {
   const prefetchHero = usePrefetchImage(project.heroImage);
 
   const handleImageError = (event) => {
-    if (event.currentTarget.dataset.fallbackUsed) return;
-    event.currentTarget.dataset.fallbackUsed = "true";
-    event.currentTarget.src = "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
+    const img = event.currentTarget;
+    if (img.dataset.fallbackUsed) return;
+    img.dataset.fallbackUsed = "true";
+    img.classList.add("img-failed");
+    img.src = "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
+    img.srcset = "";
   };
 
   return (

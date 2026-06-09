@@ -25,9 +25,23 @@ const ArrowRight = () => (
   </svg>
 );
 
-function FeaturedSlide({ project, slideState, isActive, onImageError }) {
+function FeaturedSlide({ project, slideState, isActive }) {
   const heroSrc = project.heroImage || project.coverImage;
   const prefetchHero = usePrefetchImage(heroSrc);
+
+  const handleImageError = (event) => {
+    const img = event.currentTarget;
+    if (img.dataset.fallbackUsed) return;
+    img.dataset.fallbackUsed = "true";
+    img.classList.add("img-failed");
+    // Try cover first (if different from hero), then known-good fallback
+    if (project.coverImage !== heroSrc && project.coverImage) {
+      img.src = project.coverImage;
+    } else {
+      img.src = "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
+    }
+    img.srcset = "";
+  };
 
   return (
     <Link
@@ -48,8 +62,7 @@ function FeaturedSlide({ project, slideState, isActive, onImageError }) {
         className="featured-slide-image"
         loading={isActive ? "eager" : "lazy"}
         decoding="async"
-        data-fallback-src={project.coverImage !== heroSrc ? project.coverImage : undefined}
-        onError={onImageError}
+        onError={handleImageError}
       />
       <div className="featured-slide-shade" />
       <div className="featured-slide-caption">
@@ -111,15 +124,6 @@ export default function FeaturedCarousel({ projects }) {
     else if (event.key === "ArrowRight") showNext();
   };
 
-  const handleImageError = (event) => {
-    const img = event.currentTarget;
-    if (img.dataset.fallbackUsed) return;
-    img.dataset.fallbackUsed = "true";
-    // Try the cover image as fallback, or a known working hero
-    const fallback = img.dataset.fallbackSrc || "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
-    img.src = fallback;
-  };
-
   return (
     <div
       className="featured-carousel"
@@ -150,7 +154,6 @@ export default function FeaturedCarousel({ projects }) {
             project={project}
             slideState={getSlideState(index, activeIndex, total)}
             isActive={index === activeIndex}
-            onImageError={handleImageError}
           />
         ))}
       </div>

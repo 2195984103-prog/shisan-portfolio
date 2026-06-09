@@ -66,6 +66,18 @@ export default function ProjectDetail() {
           className="project-hero-image"
           decoding="async"
           fetchPriority="high"
+          onError={(e) => {
+            // fallback: try cover if hero failed, else use any optimized fallback
+            const img = e.currentTarget;
+            if (img.src !== project.coverImage && project.coverImage) {
+              img.src = project.coverImage;
+              img.srcset = projectImageSrcSet(project.coverImage) || "";
+            } else if (!img.dataset.finalFallback) {
+              img.dataset.finalFallback = "true";
+              img.src = "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp";
+              img.srcset = "";
+            }
+          }}
         />
         <div className="project-hero-shade" />
         <div className="project-hero-blur" />
