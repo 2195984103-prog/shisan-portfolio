@@ -98,7 +98,7 @@ export default function LazyImage({
       decoding="async"
       fetchPriority={fetchPriority}
       onLoad={() => setLoaded(true)}
-      className={`${className} ${loaded ? "img-loaded" : ""}`}
+      className={`${className} ${loaded ? "img-loaded" : "img-loading"}`}
       {...rest}
     />
   );

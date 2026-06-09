@@ -58,7 +58,7 @@ img {
   max-width: 100%;
   transition: opacity 0.5s ease;
 }
-img[loading="lazy"] {
+img.img-loading {
   opacity: 0;
 }
 img.img-loaded {
