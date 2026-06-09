@@ -1,14 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 
 /**
- * Viewport-lazy image with optional progressive loading.
+ * Viewport-lazy image with progressive loading.
  *
- * When `placeholder` is provided:
- *   1. Placeholder loads immediately when the image enters the viewport.
- *   2. The full-resolution src/srcSet is preloaded in background.
- *   3. When the full image is ready, it replaces the placeholder seamlessly.
- *
- * Image quality is preserved — the final render always uses the full src/srcSet.
+ * 1. Renders a spacer before the image enters the viewport.
+ * 2. Shows a small thumbnail placeholder while the full image preloads.
+ * 3. Swaps to the full-resolution image once it's cached.
+ * 4. If the full image fails, keeps the placeholder visible.
  */
 export default function LazyImage({
   src,
@@ -21,17 +19,16 @@ export default function LazyImage({
   onError,
   ...rest
 }) {
-  const ref = useRef(null);
+  const placeholderRef = useRef(null);
+  const fullRef = useRef(null);
   const [inView, setInView] = useState(false);
-  const [showFull, setShowFull] = useState(false);
-  const [fallbackSrc, setFallbackSrc] = useState(null);
+  const [useFull, setUseFull] = useState(false);
+  const [fullFailed, setFullFailed] = useState(false);
   const isPriority = fetchPriority === "high";
-  const visibleSrc = fallbackSrc || src;
-  const visibleSrcSet = fallbackSrc ? undefined : srcSet;
 
   // Viewport detection
   useEffect(() => {
-    const el = ref.current;
+    const el = placeholderRef.current;
     if (!el) return;
 
     const obs = new IntersectionObserver(
@@ -41,84 +38,75 @@ export default function LazyImage({
           obs.disconnect();
         }
       },
-      { rootMargin: "1000px" }
+      { rootMargin: "800px" }
     );
 
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  // When in view, preload full-res image then swap
+  // When in view, preload full-res image
   useEffect(() => {
     if (!inView) return;
 
-    if (placeholder && !isPriority) {
-      // Progressive: preload full-res in background (warms browser cache)
-      // so the DOM <img> loads instantly and CSS opacity transition works.
+    if (isPriority) {
+      setUseFull(true);
+      return;
+    }
+
+    if (placeholder) {
       const preloader = new Image();
       if (srcSet) {
         preloader.srcset = srcSet;
         if (sizes) preloader.sizes = sizes;
       }
       preloader.src = src;
-
-      const applyFull = () => setShowFull(true);
-      preloader.onload = applyFull;
-      preloader.onerror = () => setShowFull(true); // try src directly
+      preloader.onload = () => setUseFull(true);
+      preloader.onerror = () => setFullFailed(true);
     } else {
-      // Priority or no placeholder: go straight to full
-      setShowFull(true);
+      setUseFull(true);
     }
-  }, [inView, placeholder, src, srcSet, sizes, isPriority]);
+  }, [inView]);
 
+  // Not in view yet — spacer
   if (!inView) {
-    return <span ref={ref} className={className} {...rest} />;
+    return (
+      <span
+        ref={placeholderRef}
+        className={className}
+        style={{ display: "block" }}
+        {...rest}
+      />
+    );
   }
 
-  // Placeholder phase
-  if (!showFull && placeholder) {
+  // Full-res loaded — show it
+  if (useFull) {
     return (
       <img
-        ref={ref}
-        src={placeholder}
+        ref={fullRef}
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
         alt={alt}
+        loading="lazy"
         decoding="async"
+        fetchPriority={fetchPriority}
         className={className}
         {...rest}
       />
     );
   }
 
-  // Full-resolution phase
+  // Placeholder phase (thumb visible while full loads)
+  // or full failed — keep showing placeholder
   return (
     <img
-      ref={ref}
-      src={visibleSrc}
-      srcSet={visibleSrcSet}
-      sizes={sizes}
+      ref={fullRef}
+      src={placeholder || src}
       alt={alt}
-      loading={isPriority ? "eager" : "lazy"}
       decoding="async"
-      fetchPriority={fetchPriority}
-      onError={(e) => {
-        const image = e.currentTarget;
-        const candidates = [
-          placeholder,
-          src?.replace("/assets/projects/", "/assets/optimized/projects/").replace(/\.(jpe?g)$/i, ".webp"),
-          "/assets/optimized/projects/dongfeng-lantu-kv/hero.webp",
-        ].filter(Boolean);
-        const nextFallback = candidates.find((candidate) => candidate !== image.getAttribute("src"));
-
-        if (nextFallback) {
-          image.classList.remove("img-failed");
-          setFallbackSrc(nextFallback);
-        } else {
-          image.classList.add("img-failed");
-        }
-
-        if (onError) onError(e);
-      }}
-      className={`${className} ${fallbackSrc ? "img-fallback" : ""}`}
+      className={`${className} ${fullFailed ? "img-failed" : ""}`}
       {...rest}
     />
   );
