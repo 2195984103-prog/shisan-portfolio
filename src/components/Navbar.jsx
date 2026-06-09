@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { label: "作品", to: "/work" },
@@ -8,12 +8,26 @@ const navItems = [
 
 export default function Navbar() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const isHome = pathname === "/";
   const isProjectDetail =
     pathname.startsWith("/project/") || pathname.startsWith("/projects/");
   const isImmersiveTop = (isHome || isProjectDetail) && !scrolled;
   const isLightHomeTop = false;
+
+  const goToContact = useCallback((e) => {
+    e.preventDefault();
+    if (isHome) {
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/");
+      // After navigation, scroll to contact
+      setTimeout(() => {
+        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [isHome, navigate]);
 
   useEffect(() => {
     const updateScrolled = () => setScrolled(window.scrollY > 18);
@@ -78,6 +92,7 @@ export default function Navbar() {
           ))}
           <a
             href="/#contact"
+            onClick={goToContact}
             className={[
               "focus-ring ui-nowrap rounded-lg px-1.5 py-2 transition sm:px-4",
               isLightHomeTop
