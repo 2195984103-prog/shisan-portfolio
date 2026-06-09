@@ -49,8 +49,9 @@ export default function LazyImage({
   useEffect(() => {
     if (!inView) return;
 
-    if (placeholder && !isPriority && fetchPriority !== "low") {
-      // Auto-priority progressive: preload full-res in background
+    if (placeholder && !isPriority) {
+      // Progressive: preload full-res in background (warms browser cache)
+      // so the DOM <img> loads instantly and CSS opacity transition works.
       const preloader = new Image();
       if (srcSet) {
         preloader.srcset = srcSet;
@@ -62,12 +63,10 @@ export default function LazyImage({
       preloader.onload = applyFull;
       preloader.onerror = applyFull;
     } else {
-      // priority=high → skip placeholder, load eagerly via DOM
-      // priority=low  → skip background preloader, let browser schedule lazily
-      // no placeholder → go straight to full
+      // Priority or no placeholder: go straight to full
       setShowFull(true);
     }
-  }, [inView, placeholder, src, srcSet, sizes, isPriority, fetchPriority]);
+  }, [inView, placeholder, src, srcSet, sizes, isPriority]);
 
   if (!inView) {
     return <span ref={ref} className={className} {...rest} />;
