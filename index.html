@@ -7,7 +7,28 @@
       name="description"
       content="视觉设计师个人作品集，展示汽车广告、美妆视觉、视觉设计和 AIGC 工作流。"
     />
-    <title>Visual Portfolio</title>
+    <title>SHISAN — 视觉设计师作品集</title>
+
+    <!-- Preconnect to Netlify CDN -->
+    <link rel="preconnect" href="https://teal-jelly-224489.netlify.app" />
+
+    <!-- Preload critical font -->
+    <link
+      rel="preload"
+      href="/fonts/optimized/oppo-sans-portfolio.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+
+    <!-- Preload critical first hero image -->
+    <link
+      rel="preload"
+      href="/assets/optimized/projects/dongfeng-lantu-kv/hero.webp"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <div id="root"></div>

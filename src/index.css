@@ -180,7 +180,7 @@ img {
     background: #050505;
     color: white;
     pointer-events: none;
-    animation: home-intro-out 980ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: home-intro-out 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   .home-loader {
@@ -233,7 +233,7 @@ img {
     line-height: 0.78;
     text-align: center;
     transform: translateY(0.08em);
-    animation: home-loader-number 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: home-loader-number 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .home-loader-line {
@@ -248,7 +248,7 @@ img {
     width: 100%;
     background: #f26a1b;
     transform-origin: left;
-    animation: home-loader-line 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: home-loader-line 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .home-loader p {
