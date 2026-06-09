@@ -16,6 +16,7 @@ export default function LazyImage({
   sizes,
   placeholder,
   alt = "",
+  fetchPriority,
   className = "",
   ...rest
 }) {
@@ -23,6 +24,7 @@ export default function LazyImage({
   const [inView, setInView] = useState(false);
   const [showFull, setShowFull] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const isPriority = fetchPriority === "high";
 
   // Viewport detection
   useEffect(() => {
@@ -47,8 +49,8 @@ export default function LazyImage({
   useEffect(() => {
     if (!inView) return;
 
-    if (placeholder) {
-      // Preload full-res in background
+    if (placeholder && !isPriority) {
+      // Progressive: preload full-res in background
       const preloader = new Image();
       if (srcSet) {
         preloader.srcset = srcSet;
@@ -58,11 +60,12 @@ export default function LazyImage({
 
       const applyFull = () => setShowFull(true);
       preloader.onload = applyFull;
-      preloader.onerror = applyFull; // swap even on error to try src directly
+      preloader.onerror = applyFull;
     } else {
+      // Priority or no placeholder: go straight to full
       setShowFull(true);
     }
-  }, [inView, placeholder, src, srcSet, sizes]);
+  }, [inView, placeholder, src, srcSet, sizes, isPriority]);
 
   if (!inView) {
     return <span ref={ref} className={className} {...rest} />;
@@ -90,8 +93,9 @@ export default function LazyImage({
       srcSet={srcSet}
       sizes={sizes}
       alt={alt}
-      loading="lazy"
+      loading={isPriority ? "eager" : "lazy"}
       decoding="async"
+      fetchPriority={fetchPriority}
       onLoad={() => setLoaded(true)}
       className={`${className} ${loaded ? "img-loaded" : ""}`}
       {...rest}

@@ -39,7 +39,7 @@ export default function Work() {
         />
         <div className="grid gap-x-8 gap-y-16 md:grid-cols-2">
           {filteredProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} large={index === 0} />
+            <ProjectCard key={project.id} project={project} large={index === 0} priority={index < 2} />
           ))}
         </div>
       </div>

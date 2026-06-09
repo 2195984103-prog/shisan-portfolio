@@ -53,8 +53,8 @@ export default function Category() {
 
         {categoryProjects.length > 0 ? (
           <div className="grid gap-x-8 gap-y-16 pt-14 md:grid-cols-2 lg:pt-20">
-            {categoryProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            {categoryProjects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} priority={index < 2} />
             ))}
           </div>
         ) : (

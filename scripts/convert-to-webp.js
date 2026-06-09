@@ -8,12 +8,15 @@ const PROJECT_ROOT = resolve(__dirname, "..");
 const PUBLIC = resolve(PROJECT_ROOT, "public");
 const PROJECTS_SRC = resolve(PUBLIC, "assets/projects");
 const OPTIMIZED_DIR = resolve(PUBLIC, "assets/optimized/projects");
+const DESKTOP_DIR = resolve(PUBLIC, "assets/desktop/projects");
 const MOBILE_DIR = resolve(PUBLIC, "assets/mobile/projects");
 
-// Quality settings: 85 = visually lossless, 80 = very good for mobile
+// 1800w for hero/full-width display, 1200w for card grids, 960w for mobile
 const OPTIMIZED_QUALITY = 85;
+const DESKTOP_QUALITY = 85;
 const MOBILE_QUALITY = 82;
 const OPTIMIZED_WIDTH = 1800;
+const DESKTOP_WIDTH = 1200;
 const MOBILE_WIDTH = 960;
 
 function formatKB(bytes) {
@@ -32,6 +35,24 @@ function getAllJpgs(dir) {
     if (stat.isDirectory()) {
       results.push(...getAllJpgs(fullPath));
     } else if (/\.(jpe?g)$/i.test(entry)) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+function getAllWebps(dir) {
+  const results = [];
+  if (!existsSync(dir)) return results;
+
+  const entries = readdirSync(dir);
+  for (const entry of entries) {
+    const fullPath = join(dir, entry);
+    const stat = statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      results.push(...getAllWebps(fullPath));
+    } else if (/\.webp$/i.test(entry)) {
       results.push(fullPath);
     }
   }
@@ -141,12 +162,48 @@ async function main() {
     }
   }
 
+  // 3. Generate desktop (1200w) WebP from optimized (1800w) WebP
+  console.log("\n=== Generating DESKTOP WebP (1200px, q85) from optimized ===");
+  let deskTotalBefore = 0;
+  let deskTotalAfter = 0;
+  let deskCount = 0;
+
+  if (existsSync(OPTIMIZED_DIR)) {
+    const optimizedWebps = getAllWebps(OPTIMIZED_DIR);
+
+    for (const webp of optimizedWebps) {
+      const name = webp.replace(OPTIMIZED_DIR, "");
+      if (!existsSync(webp)) continue;
+
+      const inputSize = statSync(webp).size;
+      const outputPath = webp.replace(OPTIMIZED_DIR, DESKTOP_DIR);
+
+      if (existsSync(outputPath) && statSync(outputPath).mtime > statSync(webp).mtime) {
+        console.log(`  SKIP ${name} — already converted`);
+        deskTotalAfter += statSync(outputPath).size;
+        deskCount++;
+        continue;
+      }
+
+      const outSize = await compressImage(webp, outputPath, DESKTOP_WIDTH, DESKTOP_QUALITY);
+      if (outSize > 0) {
+        const reduction = ((1 - outSize / inputSize) * 100).toFixed(0);
+        console.log(`  ${name}: ${formatKB(inputSize)}KB → ${formatKB(outSize)}KB (${reduction}%)`);
+        deskTotalBefore += inputSize;
+        deskTotalAfter += outSize;
+        deskCount++;
+      }
+    }
+  }
+
   // Summary
   console.log("\n========================================");
   console.log("SUMMARY:");
   console.log(`  Optimized: ${optCount} images | ${formatKB(optTotalBefore)}KB → ${formatKB(optTotalAfter)}KB WebP`);
+  console.log(`  Desktop:   ${deskCount} images | ${formatKB(deskTotalBefore)}KB → ${formatKB(deskTotalAfter)}KB WebP`);
   console.log(`  Mobile:    ${mobCount} images | ${formatKB(mobTotalBefore)}KB → ${formatKB(mobTotalAfter)}KB WebP`);
-  console.log(`  Total WebP savings: ${formatKB(optTotalBefore + mobTotalBefore - optTotalAfter - mobTotalAfter)}KB`);
+  const totalSaved = optTotalBefore + deskTotalBefore + mobTotalBefore - optTotalAfter - deskTotalAfter - mobTotalAfter;
+  console.log(`  Total WebP savings: ${formatKB(Math.max(0, totalSaved))}KB`);
   console.log(`\n  Don't forget to run the cleanup step to remove old JPG files!`);
 }
 

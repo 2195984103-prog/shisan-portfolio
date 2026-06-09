@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { projectImageSrcSet, projectGallerySrc } from "../utils/assets.js";
 import LazyImage from "./LazyImage.jsx";
 
-export default function ProjectCard({ project, large = false }) {
+export default function ProjectCard({ project, large = false, priority = false }) {
   return (
     <Link
       to={`/project/${project.id}`}
@@ -16,6 +16,7 @@ export default function ProjectCard({ project, large = false }) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           placeholder={projectGallerySrc(project.coverImage)}
           alt={project.title}
+          fetchPriority={priority ? "high" : "auto"}
           className={[
             "image-hover w-full object-cover",
             "aspect-[16/9]",

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { projectImageSrcSet } from "../utils/assets.js";
+import { projectImageSrcSetCompact } from "../utils/assets.js";
 import usePrefetchImage from "../hooks/usePrefetchImage.js";
 
 const orbitSlots = [
@@ -33,7 +33,7 @@ function SphereNode({ project, slotClass, index }) {
     >
       <img
         src={project.coverImage}
-        srcSet={projectImageSrcSet(project.coverImage)}
+        srcSet={projectImageSrcSetCompact(project.coverImage)}
         sizes="(max-width: 640px) 96px, 170px"
         alt=""
         className="sphere-node-image"
