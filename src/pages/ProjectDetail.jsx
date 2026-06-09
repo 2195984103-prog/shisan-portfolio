@@ -162,6 +162,7 @@ export default function ProjectDetail() {
                         }
                         placeholder={projectGallerySrc(image)}
                         alt={`${project.title} 项目展示图 ${index + 1}`}
+                        fetchPriority="low"
                         className="h-full w-full object-cover"
                       />
                     )}
